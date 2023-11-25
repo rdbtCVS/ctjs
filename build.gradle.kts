@@ -24,6 +24,7 @@ plugins {
 
     id("io.github.juuxel.loom-quiltflower") version "1.10.0"
     id("org.jetbrains.dokka") version "1.8.20"
+    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
 }
 
 val modVersion = property("mod_version")!!.toString()
@@ -70,6 +71,9 @@ dependencies {
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.1.2")
 
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:1.8.20")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(project(":typing-generator"))
+    ksp(project(":typing-generator"))
 }
 
 loom {
