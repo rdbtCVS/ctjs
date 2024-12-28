@@ -193,7 +193,7 @@ class TextComponent private constructor(
                 Client.getMinecraft().networkHandler?.onGameMessage(GameMessageS2CPacket(this, false))
             }
         } else {
-            Player.toMC()?.sendMessage(this)
+            Player.toMC()?.sendMessage(this, false)
         }
     }
 

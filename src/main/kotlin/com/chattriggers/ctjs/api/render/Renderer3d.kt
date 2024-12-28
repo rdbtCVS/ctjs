@@ -245,7 +245,7 @@ object Renderer3d {
         if (renderThroughBlocks) {
             Renderer.depthMask(true)
             Renderer.depthFunc(GL11.GL_ALWAYS)
-            RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC)
+            RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT)
         }
 
         val opacity = (Settings.toMC().getTextBackgroundOpacity(0.25f) * 255).toInt() shl 24

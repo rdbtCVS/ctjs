@@ -28,6 +28,9 @@ import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.render.entity.EntityRendererFactory
+import net.minecraft.client.render.entity.PlayerEntityRenderer
+import net.minecraft.client.render.entity.state.LivingEntityRenderState
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState
 import net.minecraft.client.util.math.MatrixStack
 import org.joml.Matrix4f
 import org.joml.Quaternionf
@@ -669,7 +672,7 @@ object Renderer {
         matrixStack.push()
         matrixStack.translate(0.0, 0.0, 1000.0)
         matrixStack.push()
-        matrixStack.translate(x.toDouble(), y.toDouble(), -950.0)
+        matrixStack.translate(x.toDouble(), y.toDouble(), 50.0)
 
         // UC's version of multiplyPositionMatrix
         matrixStack.peek().model.mul(
@@ -707,18 +710,23 @@ object Renderer {
             showStingers
         )
 
-        val vec3d = entityRenderer.getPositionOffset(entity, partialTicks)
+        val playerEntityRenderState = entityRenderer.createRenderState().apply {
+            this.baseScale = size.toFloat()
+            this.bodyYaw = entity.bodyYaw
+            this.yawDegrees = entity.yaw
+        }
+
+        val vec3d = entityRenderer.getPositionOffset(playerEntityRenderState)
         val d = vec3d.getX()
         val e = vec3d.getY()
         val f = vec3d.getZ()
         matrixStack.push()
         matrixStack.translate(d, e, f)
-        RenderSystem.runAsFancy {
-            entityRenderer.render(entity, 0.0f, 1.0f, matrixStack.toMC(), vertexConsumers, light)
-            if (entity.doesRenderOnFire()) {
-                entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
-                    .invokeRenderFire(matrixStack.toMC(), vertexConsumers, entity, Quaternionf())
-            }
+
+        entityRenderer.render(playerEntityRenderState, matrixStack.toMC(), vertexConsumers, light)
+        if (entity.doesRenderOnFire()) {
+            entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
+                .invokerRenderFire(matrixStack.toMC(), vertexConsumers, playerEntityRenderState, Quaternionf())
         }
 
         matrixStack.pop()
