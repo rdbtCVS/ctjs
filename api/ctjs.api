@@ -441,19 +441,19 @@ public final class com/chattriggers/ctjs/api/client/Settings$ParticlesMode : jav
 	public static final field DECREASED Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static final field MINIMAL Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static final fun from (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
-	public static final fun fromMC (Lnet/minecraft/client/option/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
+	public static final fun fromMC (Lnet/minecraft/particle/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public synthetic fun getMcValue ()Ljava/lang/Object;
-	public fun getMcValue ()Lnet/minecraft/client/option/ParticlesMode;
+	public fun getMcValue ()Lnet/minecraft/particle/ParticlesMode;
 	public synthetic fun toMC ()Ljava/lang/Object;
-	public fun toMC ()Lnet/minecraft/client/option/ParticlesMode;
+	public fun toMC ()Lnet/minecraft/particle/ParticlesMode;
 	public static fun valueOf (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static fun values ()[Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 }
 
 public final class com/chattriggers/ctjs/api/client/Settings$ParticlesMode$Companion {
 	public final fun from (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
-	public final fun fromMC (Lnet/minecraft/client/option/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
+	public final fun fromMC (Lnet/minecraft/particle/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 }
 
 public final class com/chattriggers/ctjs/api/client/Settings$SkinWrapper {
@@ -774,15 +774,15 @@ public final class com/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumen
 	public static synthetic fun copy$default (Lcom/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumentWrapper;Lnet/minecraft/command/argument/PosArgument;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumentWrapper;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getImpl ()Lnet/minecraft/command/argument/PosArgument;
+	public fun getPos (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec3d;
+	public fun getRotation (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec2f;
 	public fun hashCode ()I
 	public fun isXRelative ()Z
 	public fun isYRelative ()Z
 	public fun isZRelative ()Z
 	public final fun toAbsoluteBlockPos ()Lcom/chattriggers/ctjs/api/world/block/BlockPos;
 	public final fun toAbsolutePos ()Lnet/minecraft/util/math/Vec3d;
-	public fun toAbsolutePos (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec3d;
 	public final fun toAbsoluteRotation ()Lnet/minecraft/util/math/Vec2f;
-	public fun toAbsoluteRotation (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec2f;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1896,13 +1896,14 @@ public final class com/chattriggers/ctjs/api/render/Text$Align : java/lang/Enum 
 
 public final class com/chattriggers/ctjs/api/render/Toast : net/minecraft/client/toast/Toast {
 	public fun <init> (Lorg/mozilla/javascript/NativeObject;)V
-	public fun draw (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/toast/ToastManager;J)Lnet/minecraft/client/toast/Toast$Visibility;
+	public fun draw (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;J)V
 	public final fun getBackground ()Ljava/lang/Object;
 	public final fun getDescription ()Ljava/lang/Object;
 	public final fun getDisplayTime ()J
 	public fun getHeight ()I
 	public final fun getIcon ()Ljava/lang/Object;
 	public final fun getTitle ()Ljava/lang/Object;
+	public fun getVisibility ()Lnet/minecraft/client/toast/Toast$Visibility;
 	public fun getWidth ()I
 	public final fun setBackground (Ljava/lang/Object;)V
 	public final fun setDescription (Ljava/lang/Object;)V
@@ -1910,6 +1911,7 @@ public final class com/chattriggers/ctjs/api/render/Toast : net/minecraft/client
 	public final fun setIcon (Ljava/lang/Object;)V
 	public final fun setTitle (Ljava/lang/Object;)V
 	public final fun show ()Lcom/chattriggers/ctjs/api/render/Toast;
+	public fun update (Lnet/minecraft/client/toast/ToastManager;J)V
 }
 
 public class com/chattriggers/ctjs/api/triggers/CancellableEvent {
