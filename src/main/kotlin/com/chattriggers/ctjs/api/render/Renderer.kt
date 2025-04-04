@@ -180,10 +180,10 @@ object Renderer {
     }
 
     @JvmStatic
-    fun disableCull() = apply { RenderSystem.disableCull() }
+    fun disableCull() = apply { }
 
     @JvmStatic
-    fun enableCull() = apply { RenderSystem.enableCull() }
+    fun enableCull() = apply { }
 
     @JvmStatic
     fun disableLighting() = apply { UGraphics.disableLighting() }
@@ -225,12 +225,12 @@ object Renderer {
     @JvmStatic
     @JvmOverloads
     fun bindTexture(texture: Image, textureIndex: Int = 0) = apply {
-        UGraphics.bindTexture(textureIndex, texture.getTexture()?.glId ?: 0)
+        UGraphics.bindTexture(textureIndex, texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
     fun deleteTexture(texture: Image) = apply {
-        UGraphics.deleteTexture(texture.getTexture()?.glId ?: 0)
+        UGraphics.deleteTexture(texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
@@ -583,7 +583,7 @@ object Renderer {
 
         scale(1f, 1f, 50f)
 
-        RenderSystem.setShaderTexture(0, image.getTexture()?.glId ?: 0)
+        RenderSystem.setShaderTexture(0, image.getTexture()?.glTexture)
 
         begin(DrawMode.QUADS, VertexFormat.POSITION_TEXTURE)
         pos(x, y + height, 0f).tex(0f, 1f)
@@ -660,14 +660,14 @@ object Renderer {
         val oldBodyYaw = entity.bodyYaw
         val oldYaw = entity.yaw
         val oldPitch = entity.pitch
-        val oldPrevHeadYaw = entity.prevHeadYaw
+        val oldPrevHeadYaw = entity.lastHeadYaw
         val oldHeadYaw = entity.headYaw
 
         entity.bodyYaw = 180.0f + entityYaw * 20.0f
         entity.yaw = 180.0f + entityYaw * 40.0f
         entity.pitch = -entityPitch * 20.0f
         entity.headYaw = entity.yaw
-        entity.prevHeadYaw = entity.yaw
+        entity.lastHeadYaw = entity.yaw
 
         matrixStack.push()
         matrixStack.translate(0.0, 0.0, 1000.0)
@@ -684,7 +684,7 @@ object Renderer {
         )
 
         matrixStack.multiply(flipModelRotation)
-        DiffuseLighting.method_34742()
+        DiffuseLighting.enableGuiShaderLighting()
 
         val entityRenderDispatcher = MinecraftClient.getInstance().entityRenderDispatcher
 
@@ -713,7 +713,7 @@ object Renderer {
         val playerEntityRenderState = entityRenderer.createRenderState().apply {
             this.baseScale = size.toFloat()
             this.bodyYaw = entity.bodyYaw
-            this.yawDegrees = entity.yaw
+            this.relativeHeadYaw = entity.yaw
         }
 
         val vec3d = entityRenderer.getPositionOffset(playerEntityRenderState)
@@ -740,7 +740,7 @@ object Renderer {
         entity.bodyYaw = oldBodyYaw
         entity.yaw = oldYaw
         entity.pitch = oldPitch
-        entity.prevHeadYaw = oldPrevHeadYaw
+        entity.lastHeadYaw = oldPrevHeadYaw
         entity.headYaw = oldHeadYaw
 
         matrixStack.pop()
@@ -784,7 +784,7 @@ object Renderer {
     }
 
     enum class VertexFormat(private val mcValue: MCVertexFormat) {
-        LINES(VertexFormats.LINES),
+        LINES(VertexFormats.POSITION_COLOR_NORMAL),
         POSITION(VertexFormats.POSITION),
         POSITION_COLOR(VertexFormats.POSITION_COLOR),
         POSITION_TEXTURE(VertexFormats.POSITION_TEXTURE),

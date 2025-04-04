@@ -22,7 +22,7 @@ import net.minecraft.component.DataComponentTypes
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.Item.TooltipContext
 import net.minecraft.item.ItemStack
-import net.minecraft.item.ModelTransformationMode
+import net.minecraft.item.ItemDisplayContext
 import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.util.crash.CrashException
 import net.minecraft.util.crash.CrashReport
@@ -132,9 +132,9 @@ class Item(override val mcValue: ItemStack) : CTWrapper<ItemStack> {
         // to here, so its drawItem method has been copy-pasted here instead
         if (mcValue.isEmpty)
             return
-        Client.getMinecraft().itemModelManager.update(itemRenderState, mcValue, ModelTransformationMode.GUI, false, World.toMC(), null, 0)
+        Client.getMinecraft().itemModelManager.clearAndUpdate(itemRenderState, mcValue, ItemDisplayContext.GUI, World.toMC(), null, 0)
         Renderer.pushMatrix()
-        Renderer.translate(x + 8, y + 8, (150f + if (itemRenderState.hasDepth()) z else 0f))
+        Renderer.translate(x + 8, y + 8, 150 + z)
         try {
             val vertexConsumers = Client.getMinecraft().bufferBuilders.entityVertexConsumers
             Renderer.scale(16.0f, -16.0f, 16.0f)

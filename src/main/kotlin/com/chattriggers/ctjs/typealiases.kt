@@ -23,5 +23,5 @@ typealias MCBossBarStyle = net.minecraft.entity.boss.BossBar.Style
 typealias MCCloudRenderMode = net.minecraft.client.option.CloudRenderMode
 typealias MCParticlesMode = net.minecraft.particle.ParticlesMode
 typealias MCDimensionType = net.minecraft.world.dimension.DimensionType
-typealias MCVertexFormat = net.minecraft.client.render.VertexFormat
+typealias MCVertexFormat = com.mojang.blaze3d.vertex.VertexFormat
 typealias MCChatVisibility = net.minecraft.network.message.ChatVisibility

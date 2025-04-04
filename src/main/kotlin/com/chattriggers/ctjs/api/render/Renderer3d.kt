@@ -15,7 +15,6 @@ import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.VertexFormat
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.mozilla.javascript.NativeObject
@@ -245,7 +244,7 @@ object Renderer3d {
         if (renderThroughBlocks) {
             Renderer.depthMask(true)
             Renderer.depthFunc(GL11.GL_ALWAYS)
-            RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT)
+            //RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT)
         }
 
         val opacity = (Settings.toMC().getTextBackgroundOpacity(0.25f) * 255).toInt() shl 24

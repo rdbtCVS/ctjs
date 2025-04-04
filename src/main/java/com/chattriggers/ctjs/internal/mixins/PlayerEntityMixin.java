@@ -50,7 +50,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements NameTagO
         method = "attack",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/entity/LivingEntity;serverDamage(Lnet/minecraft/entity/damage/DamageSource;F)V"
+            target = "Lnet/minecraft/entity/Entity;sidedDamage(Lnet/minecraft/entity/damage/DamageSource;F)Z"
         )
     )
     private void chattriggers$entityDamageSweeping(Entity target, CallbackInfo ci) {
