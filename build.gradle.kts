@@ -42,7 +42,7 @@ dependencies {
 
     modImplementation(libs.bundles.included) { include(this) }
     modImplementation(libs.bundles.essential) {
-        exclude("gg.essential", "universalcraft-1.18.1-fabric")
+        exclude("gg.essential", "universalcraft-1.21.4-fabric")
         include(this)
     }
 
