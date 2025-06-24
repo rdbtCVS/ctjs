@@ -42,11 +42,13 @@ object Renderer3d {
         vertexFormat: Renderer.VertexFormat = Renderer.VertexFormat.POSITION,
     ) = apply {
         Renderer.pushMatrix()
-            .enableBlend()
-            .disableCull()
-        Renderer.tryBlendFuncSeparate(770, 771, 1, 0)
+//            .enableBlend()
+//            .disableCull()
+//        Renderer.tryBlendFuncSeparate(770, 771, 1, 0)
 
-        worldRenderer.beginWithDefaultShader(drawMode.toUC(), vertexFormat.toMC())
+//        worldRenderer.beginWithDefaultShader(drawMode.toUC(), vertexFormat.toMC())
+        // TODO: make an internal api for all the type of drawModes and vertexFormats
+        worldRenderer.beginRenderLayer(CTRenderLayers.DEFAULT)
 
         firstVertex = true
         began = true
@@ -185,10 +187,10 @@ object Renderer3d {
         worldRenderer.endVertex()
 
         worldRenderer.drawDirect()
-        Renderer.colorize(1f, 1f, 1f, 1f)
-            .disableBlend()
-            .enableCull()
-            .popMatrix()
+//        Renderer.colorize(1f, 1f, 1f, 1f)
+//            .disableBlend()
+//            .enableCull()
+//            .popMatrix()
     }
 
     /**
