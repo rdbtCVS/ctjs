@@ -10,13 +10,10 @@ import gg.essential.elementa.dsl.component2
 import gg.essential.elementa.dsl.component3
 import gg.essential.elementa.dsl.component4
 import gg.essential.universal.UGraphics
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumerProvider
 import org.joml.Vector3f
-import org.lwjgl.opengl.GL11
 import org.mozilla.javascript.NativeObject
 import java.awt.Color
 
@@ -40,15 +37,12 @@ object Renderer3d {
     fun begin(
         drawMode: Renderer.DrawMode = Renderer.DrawMode.QUADS,
         vertexFormat: Renderer.VertexFormat = Renderer.VertexFormat.POSITION,
+        snippet: Renderer.RenderSnippet = Renderer.RenderSnippet.POSITION_COLOR_SNIPPET
     ) = apply {
         Renderer.pushMatrix()
-//            .enableBlend()
-//            .disableCull()
-//        Renderer.tryBlendFuncSeparate(770, 771, 1, 0)
-
-//        worldRenderer.beginWithDefaultShader(drawMode.toUC(), vertexFormat.toMC())
-        // TODO: make an internal api for all the type of drawModes and vertexFormats
-        worldRenderer.beginRenderLayer(CTRenderLayers.DEFAULT)
+            .enableBlend()
+            .disableCull()
+        worldRenderer.beginRenderLayer(LegacyPipelineBuilder.begin(drawMode, vertexFormat, snippet).layer())
 
         firstVertex = true
         began = true
@@ -187,10 +181,10 @@ object Renderer3d {
         worldRenderer.endVertex()
 
         worldRenderer.drawDirect()
-//        Renderer.colorize(1f, 1f, 1f, 1f)
-//            .disableBlend()
-//            .enableCull()
-//            .popMatrix()
+        Renderer.colorize(1f, 1f, 1f, 1f)
+            .disableBlend()
+            .enableCull()
+            .popMatrix()
     }
 
     /**
@@ -241,13 +235,7 @@ object Renderer3d {
         Renderer.pushMatrix()
         Renderer.translate(renderPos.x, renderPos.y, renderPos.z)
         Renderer.multiply(camera.rotation)
-        Renderer.scale(-lScale, -lScale, lScale)
-
-        if (renderThroughBlocks) {
-            Renderer.depthMask(true)
-            Renderer.depthFunc(GL11.GL_ALWAYS)
-            //RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT)
-        }
+        Renderer.scale(lScale, -lScale, lScale)
 
         val opacity = (Settings.toMC().getTextBackgroundOpacity(0.25f) * 255).toInt() shl 24
 
@@ -256,6 +244,7 @@ object Renderer3d {
 
         val vertexConsumers = Client.getMinecraft().bufferBuilders.entityVertexConsumers
         var yOffset = 0
+        val textLayer = if (renderThroughBlocks) TextRenderer.TextLayerType.SEE_THROUGH else TextRenderer.TextLayerType.NORMAL
 
         for (line in lines) {
             val centerShift = if (centered) {
@@ -274,7 +263,7 @@ object Renderer3d {
                     false,
                     matrix,
                     vertexConsumers,
-                    TextRenderer.TextLayerType.NORMAL,
+                    textLayer,
                     opacity,
                     LightmapTextureManager.MAX_LIGHT_COORDINATE
                 )
@@ -289,7 +278,7 @@ object Renderer3d {
                 false,
                 matrix,
                 vertexConsumers,
-                TextRenderer.TextLayerType.NORMAL,
+                textLayer,
                 0,
                 LightmapTextureManager.MAX_LIGHT_COORDINATE
             )
@@ -299,9 +288,6 @@ object Renderer3d {
             yOffset += fontRenderer.fontHeight + 1
         }
 
-        if (renderThroughBlocks) {
-            Renderer.depthFunc(GL11.GL_LEQUAL)
-        }
         Renderer.popMatrix()
     }
 
@@ -359,7 +345,7 @@ object Renderer3d {
 
         val normalVec = Vector3f(x2 - x1, y2 - y1, z2 - z1).normalize()
 
-        begin(Renderer.DrawMode.LINES, Renderer.VertexFormat.LINES)
+        begin(Renderer.DrawMode.LINES, Renderer.VertexFormat.LINES, Renderer.RenderSnippet.RENDERTYPE_LINES_SNIPPET)
         pos(x1, y1, z1).color(r, g, b, a).normal(normalVec.x, normalVec.y, normalVec.z)
         pos(x2, y2, z2).color(r, g, b, a).normal(normalVec.x, normalVec.y, normalVec.z)
         draw()

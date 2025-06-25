@@ -1604,6 +1604,21 @@ public final class com/chattriggers/ctjs/api/render/Image$Companion {
 	public static synthetic fun fromUrl$default (Lcom/chattriggers/ctjs/api/render/Image$Companion;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Image;
 }
 
+public final class com/chattriggers/ctjs/api/render/LegacyPipelineBuilder {
+	public static final field INSTANCE Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;)Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public static synthetic fun begin$default (Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun build ()Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+	public final fun disableBlend ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun disableCull ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun disableDepth ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun enableCull ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun enableDepth ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun enabledBlend ()Lcom/chattriggers/ctjs/api/render/LegacyPipelineBuilder;
+	public final fun layer ()Lnet/minecraft/client/render/RenderLayer;
+	public final fun state ()Ljava/lang/String;
+}
+
 public final class com/chattriggers/ctjs/api/render/Rectangle {
 	public fun <init> (JFFFF)V
 	public final fun draw ()Lcom/chattriggers/ctjs/api/render/Rectangle;
@@ -1660,7 +1675,8 @@ public final class com/chattriggers/ctjs/api/render/Renderer {
 	public static final fun begin ()Lcom/chattriggers/ctjs/api/render/Renderer;
 	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;)Lcom/chattriggers/ctjs/api/render/Renderer;
 	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer;
-	public static synthetic fun begin$default (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Renderer;
+	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;)Lcom/chattriggers/ctjs/api/render/Renderer;
+	public static synthetic fun begin$default (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Renderer;
 	public static final fun bindTexture (Lcom/chattriggers/ctjs/api/render/Image;)Lcom/chattriggers/ctjs/api/render/Renderer;
 	public static final fun bindTexture (Lcom/chattriggers/ctjs/api/render/Image;I)Lcom/chattriggers/ctjs/api/render/Renderer;
 	public static synthetic fun bindTexture$default (Lcom/chattriggers/ctjs/api/render/Image;IILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Renderer;
@@ -1765,6 +1781,34 @@ public final class com/chattriggers/ctjs/api/render/Renderer$DrawMode$Companion 
 	public final fun fromUC (Lgg/essential/universal/UGraphics$DrawMode;)Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;
 }
 
+public final class com/chattriggers/ctjs/api/render/Renderer$RenderSnippet : java/lang/Enum {
+	public static final field ENTITY_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field FOG_NO_COLOR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field FOG_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field GUI_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field MATRICES_COLOR_FOG_LIGHT_DIR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field MATRICES_COLOR_FOG_OFFSET_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field MATRICES_COLOR_FOG_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field MATRICES_COLOR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field MATRICES_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field PARTICLE_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field POSITION_COLOR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field POSITION_TEX_COLOR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field POST_EFFECT_PROCESSOR_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field RENDERTYPE_BEACON_BEAM_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field RENDERTYPE_CLOUDS_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field RENDERTYPE_END_PORTAL_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field RENDERTYPE_LINES_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field RENDERTYPE_OUTLINE_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field TERRAIN_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field TEXT_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static final field WEATHER_SNIPPET Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMcSnippet ()Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+	public static fun valueOf (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+	public static fun values ()[Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;
+}
+
 public final class com/chattriggers/ctjs/api/render/Renderer$ScreenWrapper {
 	public fun <init> ()V
 	public final fun getHeight ()I
@@ -1799,7 +1843,8 @@ public final class com/chattriggers/ctjs/api/render/Renderer3d {
 	public static final fun begin ()Lcom/chattriggers/ctjs/api/render/Renderer3d;
 	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;)Lcom/chattriggers/ctjs/api/render/Renderer3d;
 	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer3d;
-	public static synthetic fun begin$default (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Renderer3d;
+	public static final fun begin (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;)Lcom/chattriggers/ctjs/api/render/Renderer3d;
+	public static synthetic fun begin$default (Lcom/chattriggers/ctjs/api/render/Renderer$DrawMode;Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;Lcom/chattriggers/ctjs/api/render/Renderer$RenderSnippet;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/render/Renderer3d;
 	public static final fun color (FFF)Lcom/chattriggers/ctjs/api/render/Renderer3d;
 	public static final fun color (FFFF)Lcom/chattriggers/ctjs/api/render/Renderer3d;
 	public static final fun color (III)Lcom/chattriggers/ctjs/api/render/Renderer3d;
