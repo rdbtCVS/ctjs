@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.DestFactor
 import com.mojang.blaze3d.platform.SourceFactor
 import net.minecraft.client.render.RenderLayer
 
-// if i don't reset the state what can go wrong, right ?
 object LegacyPipelineBuilder {
     private val layerList = mutableMapOf<String, RenderLayer>()
     private val pipelineList = mutableMapOf<String, RenderPipeline>()
@@ -55,14 +54,10 @@ object LegacyPipelineBuilder {
     fun build(): RenderPipeline {
         if (pipelineList.containsKey(state())) return pipelineList[state()]!!
 
-        // TODO: withBlendFunc, withSample, withVertexShader, withFragShader, withShaderDefine
-        // TODO: possibly make the snippet builder take into consideration drawMode
-        //  for instance, the drawMode = Lines _should_ make snippet be "RENDERTYPE_LINES_SNIPPET" not "POSITION_COLOR_SNIPPET"
         val basePipeline = RenderPipeline.builder(snippet.mcSnippet)
             .withLocation("ctjs/custom/pipeline${hashCode()}")
             .withVertexFormat(vertexFormat.toMC(), drawMode.toUC().mcMode)
         if (blend == true) basePipeline.withBlend(BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO))
-//        else if (blend == false) basePipeline.withoutBlend()
 
         if (cull != null) basePipeline.withCull(cull!!)
 
@@ -95,7 +90,6 @@ object LegacyPipelineBuilder {
                 .build(false)
         )
         layerList[state()] = layer
-        println("created layer: ${state()}")
 
         return layer
     }
