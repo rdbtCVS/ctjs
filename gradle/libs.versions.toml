@@ -14,9 +14,9 @@ textarea = "3.2.0"
 serialization = "1.5.1"
 koffee = "315bc11234"
 
-universalcraft = "398"
-elementa = "657"
-vigilance = "299"
+universalcraft = "412"
+elementa = "708"
+vigilance = "306"
 
 modmenu = "14.0.0-rc.2"
 devauth = "1.2.1"
@@ -44,8 +44,8 @@ serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", v
 koffee = { module = "com.github.ChatTriggers:koffee", version.ref = "koffee" }
 
 universalcraft = { module = "gg.essential:universalcraft-1.21.5-fabric", version.ref = "universalcraft" }
-elementa = { module = "gg.essential:elementa-1.18.1-fabric", version.ref = "elementa" }
-vigilance = { module = "gg.essential:vigilance-1.18.1-fabric", version.ref = "vigilance" }
+elementa = { module = "gg.essential:elementa", version.ref = "elementa" }
+vigilance = { module = "gg.essential:vigilance", version.ref = "vigilance" }
 
 modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
 devauth = { module = "me.djtheredstoner:DevAuth-fabric", version.ref = "devauth" }
