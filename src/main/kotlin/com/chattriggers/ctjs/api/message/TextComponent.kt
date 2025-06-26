@@ -500,14 +500,13 @@ class TextComponent private constructor(
                 else -> error("Expected \"value\" key to be a string")
             }.orEmpty()
 
-            return when (action) {
+            return when (clickAction) {
                 ClickEvent.Action.OPEN_URL -> ClickEvent.OpenUrl(URI(clickValue))
                 ClickEvent.Action.OPEN_FILE -> ClickEvent.OpenFile(clickValue)
                 ClickEvent.Action.RUN_COMMAND -> ClickEvent.RunCommand(clickValue)
                 ClickEvent.Action.SUGGEST_COMMAND -> ClickEvent.SuggestCommand(clickValue)
                 ClickEvent.Action.CHANGE_PAGE -> clickValue.toIntOrNull()?. let { ClickEvent.ChangePage(it) }
                 ClickEvent.Action.COPY_TO_CLIPBOARD -> ClickEvent.CopyToClipboard(clickValue)
-                else -> error("unreachable")
             }
         }
 
