@@ -43,7 +43,7 @@
     loadClass("java.util.HashMap");
     loadClass("gg.essential.universal.UKeyboard", "Keyboard");
     loadClass("net.minecraft.util.Hand");
-    loadClass("com.chattriggers.ctjs.api.client.FileLib");
+    loadClass("com.chattriggers.ctjs.api.FileLib");
 
     // For module authors to use with custom triggers
     loadClass("com.chattriggers.ctjs.api.triggers.CancellableEvent");

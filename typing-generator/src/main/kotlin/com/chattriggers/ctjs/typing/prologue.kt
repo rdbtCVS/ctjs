@@ -30,7 +30,7 @@ private val providedTypes = mutableMapOf(
     "Keyboard" to "gg.essential.universal.UKeyboard",
     "Hand" to "net.minecraft.util.Hand",
 
-    "FileLib" to "com.chattriggers.ctjs.api.client.FileLib",
+    "FileLib" to "com.chattriggers.ctjs.api.FileLib",
     "CancellableEvent" to "com.chattriggers.ctjs.api.triggers.CancellableEvent",
     "Config" to "com.chattriggers.ctjs.api.Config",
     "TriggerRegister" to "com.chattriggers.ctjs.engine.Register",
