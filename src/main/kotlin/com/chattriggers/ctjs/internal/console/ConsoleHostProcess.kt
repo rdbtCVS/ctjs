@@ -2,15 +2,15 @@ package com.chattriggers.ctjs.internal.console
 
 import com.chattriggers.ctjs.CTJS
 import com.chattriggers.ctjs.api.Config
-import com.chattriggers.ctjs.api.client.Client
 import com.chattriggers.ctjs.engine.LogType
-import com.chattriggers.ctjs.internal.engine.CTEvents
 import com.chattriggers.ctjs.internal.engine.JSLoader
+import com.chattriggers.ctjs.internal.listeners.ClientListener
 import com.chattriggers.ctjs.internal.utils.Initializer
 import gg.essential.universal.UDesktop
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
@@ -25,6 +25,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.concurrent.thread
 import kotlin.io.path.Path
+
 
 /**
  * Responsible for spawning and managing a separate Java console process (which uses AWT)
@@ -68,10 +69,11 @@ object ConsoleHostProcess : Initializer {
             )
         )
 
-        CTEvents.RENDER_GAME.register {
-            if (keybind.wasPressed())
+        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick {
+            while (keybind.wasPressed()) {
                 show()
-        }
+            }
+        })
     }
 
     private fun hostMain() {
@@ -138,7 +140,7 @@ object ConsoleHostProcess : Initializer {
                             Config.consoleFontSize = newValue.coerceIn(6..32)
                             onConsoleSettingsChanged(Config.ConsoleSettings.make())
                         }
-                        ReloadCTMessage -> Client.scheduleTask { CTJS.load() }
+                        ReloadCTMessage -> ClientListener.addTask(0) { CTJS.load() }
                     }
                 }
             }

@@ -50,7 +50,7 @@ object JSContextFactory : ContextFactory() {
             (urls - sources).forEach(::addURL)
         }
 
-        public override fun addURL(url: URL) {
+        override fun addURL(url: URL) {
             super.addURL(url)
             sources.add(url)
         }

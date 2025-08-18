@@ -4,8 +4,10 @@ import com.chattriggers.ctjs.internal.mixins.commands.CommandNodeAccessor
 import com.chattriggers.ctjs.internal.utils.asMixin
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
 import net.minecraft.command.CommandSource
 
 interface Command {
@@ -26,3 +28,9 @@ fun literal(name: String) = LiteralArgumentBuilder.literal<CommandSource>(name)
 
 fun <T> argument(name: String, argument: ArgumentType<T>) =
     RequiredArgumentBuilder.argument<CommandSource, T>(name, argument)
+
+fun <S, T : ArgumentBuilder<S, T>> ArgumentBuilder<S, T>.onExecute(block: (CommandContext<S>) -> Unit): T =
+    executes {
+        block(it)
+        1
+    }

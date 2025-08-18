@@ -27,14 +27,14 @@ internal abstract class InjectorGenerator(protected val ctx: GenerationContext, 
                     .startsWith("Lcom/llamalad7/mixinextras/sugar/ref/")
             ) {
                 when (it.descriptor) {
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.BOOLEAN -> com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.BYTE -> com.llamalad7.mixinextras.sugar.ref.LocalByteRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.CHAR -> com.llamalad7.mixinextras.sugar.ref.LocalCharRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.DOUBLE -> com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.FLOAT -> com.llamalad7.mixinextras.sugar.ref.LocalFloatRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.INT -> com.llamalad7.mixinextras.sugar.ref.LocalIntRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.LONG -> com.llamalad7.mixinextras.sugar.ref.LocalLongRef::class.descriptor()
-                    com.chattriggers.ctjs.internal.launch.Descriptor.Primitive.SHORT -> com.llamalad7.mixinextras.sugar.ref.LocalShortRef::class.descriptor()
+                    Descriptor.Primitive.BOOLEAN -> com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef::class.descriptor()
+                    Descriptor.Primitive.BYTE -> com.llamalad7.mixinextras.sugar.ref.LocalByteRef::class.descriptor()
+                    Descriptor.Primitive.CHAR -> com.llamalad7.mixinextras.sugar.ref.LocalCharRef::class.descriptor()
+                    Descriptor.Primitive.DOUBLE -> com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef::class.descriptor()
+                    Descriptor.Primitive.FLOAT -> com.llamalad7.mixinextras.sugar.ref.LocalFloatRef::class.descriptor()
+                    Descriptor.Primitive.INT -> com.llamalad7.mixinextras.sugar.ref.LocalIntRef::class.descriptor()
+                    Descriptor.Primitive.LONG -> com.llamalad7.mixinextras.sugar.ref.LocalLongRef::class.descriptor()
+                    Descriptor.Primitive.SHORT -> com.llamalad7.mixinextras.sugar.ref.LocalShortRef::class.descriptor()
                     else -> com.llamalad7.mixinextras.sugar.ref.LocalRef::class.descriptor()
                 }
             } else it.descriptor
@@ -121,13 +121,13 @@ internal abstract class InjectorGenerator(protected val ctx: GenerationContext, 
             Descriptor.Primitive.BOOLEAN ->
                 invokestatic(java.lang.Boolean::class, "valueOf", java.lang.Boolean::class, boolean)
             Descriptor.Primitive.CHAR ->
-                invokestatic(java.lang.Character::class, "valueOf", java.lang.Character::class, char)
+                invokestatic(Character::class, "valueOf", Character::class, char)
             Descriptor.Primitive.BYTE ->
                 invokestatic(java.lang.Byte::class, "valueOf", java.lang.Byte::class, byte)
             Descriptor.Primitive.SHORT ->
                 invokestatic(java.lang.Short::class, "valueOf", java.lang.Short::class, short)
             Descriptor.Primitive.INT ->
-                invokestatic(java.lang.Integer::class, "valueOf", java.lang.Integer::class, int)
+                invokestatic(Integer::class, "valueOf", Integer::class, int)
             Descriptor.Primitive.FLOAT ->
                 invokestatic(java.lang.Float::class, "valueOf", java.lang.Float::class, float)
             Descriptor.Primitive.LONG ->

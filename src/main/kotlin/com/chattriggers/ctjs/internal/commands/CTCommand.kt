@@ -2,15 +2,10 @@ package com.chattriggers.ctjs.internal.commands
 
 import com.chattriggers.ctjs.CTJS
 import com.chattriggers.ctjs.api.Config
-import com.chattriggers.ctjs.api.client.Client
-import com.chattriggers.ctjs.api.client.FileLib
-import com.chattriggers.ctjs.api.message.ChatLib
-import com.chattriggers.ctjs.api.message.TextComponent
+import com.chattriggers.ctjs.api.FileLib
 import com.chattriggers.ctjs.engine.Console
 import com.chattriggers.ctjs.engine.printTraceToConsole
-import com.chattriggers.ctjs.internal.commands.StaticCommand.Companion.onExecute
 import com.chattriggers.ctjs.internal.engine.module.ModuleManager
-import com.chattriggers.ctjs.internal.engine.module.ModulesGui
 import com.chattriggers.ctjs.internal.listeners.ClientListener
 import com.chattriggers.ctjs.internal.utils.Initializer
 import com.chattriggers.ctjs.internal.utils.toVersion
@@ -28,6 +23,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.client.MinecraftClient
 import net.minecraft.command.CommandSource
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
@@ -38,6 +34,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
 internal object CTCommand : Initializer {
+    private val mc = MinecraftClient.getInstance()
     private const val idFixed = 90123 // ID for dumped chat
     private var idFixedOffset = -1 // ID offset (increments)
 
@@ -49,8 +46,8 @@ internal object CTCommand : Initializer {
 
     fun register(dispatcher: CommandDispatcher<FabricClientCommandSource>) {
         val command = literal("ct")
-            .then(literal("load").onExecute { CTJS.load(asCommand = true) })
-            .then(literal("unload").onExecute { CTJS.unload(asCommand = true) })
+            .then(literal("load").onExecute { CTJS.load() })
+            .then(literal("unload").onExecute { CTJS.unload() })
             .then(literal("files").onExecute { openFileLocation() })
             .then(
                 literal("import")
@@ -63,70 +60,35 @@ internal object CTCommand : Initializer {
                         .onExecute {
                             val module = ModuleArgumentType.getModule(it, "module")
                             if (ModuleManager.deleteModule(module)) {
-                                ChatLib.chat("&aDeleted $module")
-                            } else ChatLib.chat("&cFailed to delete $module")
+                                mc.player?.sendMessage(Text.of("&aDeleted $module"), false)
+                            } else mc.player?.sendMessage(Text.of("&cFailed to delete $module"), false)
                         })
             )
-            .then(literal("modules").onExecute { Client.currentGui.set(ModulesGui) })
             .then(literal("console").onExecute { Console.show() })
-            .then(literal("config").onExecute { Client.currentGui.set(Config.gui()!!) })
+            .then(literal("config").onExecute { ClientListener.addTask(0, {
+                mc.setScreen(Config.gui()!!)
+            }) })
             .then(
                 literal("simulate")
                     .then(
                         argument("message", StringArgumentType.greedyString())
-                            .onExecute { ChatLib.simulateChat(StringArgumentType.getString(it, "message")) }
+                            .onExecute { mc.networkHandler?.sendChatMessage(StringArgumentType.getString(it, "message")) }
                     )
             )
-            .then(
-                literal("dump")
-                    .then(
-                        argument("type", StringArgumentType.word())
-                            .then(
-                                argument("amount", IntegerArgumentType.integer(0))
-                                    .onExecute {
-                                        dump(
-                                            DumpType.fromString(StringArgumentType.getString(it, "type")),
-                                            IntegerArgumentType.getInteger(it, "amount")
-                                        )
-                                    }
-                            ).onExecute {
-                                dump(DumpType.fromString(StringArgumentType.getString(it, "type")))
-                            }
-                    )
-                    .onExecute { dump(DumpType.CHAT) }
-            )
-            .then(
-                literal("migrate")
-                    .then(
-                        argument("input", FileArgumentType(File(CTJS.MODULES_FOLDER)))
-                            .then(
-                                argument("output", FileArgumentType(File(CTJS.MODULES_FOLDER)))
-                                    .onExecute {
-                                        val input = FileArgumentType.getFile(it, "input")
-                                        val output = FileArgumentType.getFile(it, "output")
-                                        Migration.migrate(input, output)
-                                    }
-                            )
-                            .onExecute {
-                                val input = FileArgumentType.getFile(it, "input")
-                                Migration.migrate(input, input)
-                            }
-                    )
-            )
-            .onExecute { ChatLib.chat(getUsage()) }
+            .onExecute { mc.player?.sendMessage(Text.of(getUsage()), false) }
 
         dispatcher.register(command)
     }
 
     private fun import(moduleName: String) {
         if (ModuleManager.cachedModules.any { it.name.equals(moduleName, ignoreCase = true) }) {
-            ChatLib.chat("&cModule $moduleName is already installed!")
+            mc.player?.sendMessage(Text.of("&cModule $moduleName is already installed!"), false)
         } else {
-            ChatLib.chat("&cImporting $moduleName...")
+            mc.player?.sendMessage(Text.of("&cImporting $moduleName..."), false)
             thread {
                 val (module, dependencies) = ModuleManager.importModule(moduleName)
                 if (module == null) {
-                    ChatLib.chat("&cUnable to import module $moduleName")
+                    mc.player?.sendMessage(Text.of("&cUnable to import module $moduleName"), false)
                     return@thread
                 }
 
@@ -138,16 +100,16 @@ internal object CTCommand : Initializer {
                         ModuleManager.tryReportOldVersion(it)
                 }
 
-                ChatLib.chat("&aSuccessfully imported ${module.metadata.name ?: module.name}")
+                mc.player?.sendMessage(Text.of("&aSuccessfully imported ${module.metadata.name ?: module.name}"), false)
                 if (Config.moduleImportHelp && module.metadata.helpMessage != null) {
-                    ChatLib.chat(module.metadata.helpMessage.toString().take(383))
+                    mc.player?.sendMessage(Text.of(module.metadata.helpMessage.toString().take(383)), false)
                 }
             }
         }
     }
 
     private fun getUsage() = """
-        &b&m${ChatLib.getChatBreak()}
+        &b&m${"-".repeat(20)}
         &c/ct load &7- &oReloads all of the ChatTriggers modules.
         &c/ct import <module> &7- &oImports a module.
         &c/ct delete <module> &7- &oDeletes a module.
@@ -159,7 +121,7 @@ internal object CTCommand : Initializer {
         &c/ct settings &7- &oOpens the ChatTriggers settings.
         &c/ct migrate <input> [output]&7 - &oMigrate a module from version 2.X to 3.X 
         &c/ct &7- &oDisplays this help dialog.
-        &b&m${ChatLib.getChatBreak()}
+        &b&m${"-".repeat(20)}
     """.trimIndent()
 
     private fun openFileLocation() {
@@ -167,47 +129,7 @@ internal object CTCommand : Initializer {
             FileLib.open(ModuleManager.modulesFolder)
         } catch (exception: IOException) {
             exception.printTraceToConsole()
-            ChatLib.chat("&cCould not open file location")
-        }
-    }
-
-    private fun dump(type: DumpType, lines: Int = 100) {
-        clearOldDump()
-
-        val messages = type.messageList()
-        val toDump = lines.coerceAtMost(messages.size)
-        TextComponent("&6&m${ChatLib.getChatBreak()}").withChatLineId(idFixed).chat()
-
-        for (i in 0 until toDump) {
-            val msg = ChatLib.replaceFormatting(messages[messages.size - toDump + i].formattedText)
-            TextComponent(Text.literal(msg).styled {
-                it.withClickEvent(ClickEvent.CopyToClipboard(msg))
-                    .withHoverEvent(
-                        HoverEvent.ShowText(TextComponent("&eClick here to copy this message."))
-                    )
-            })
-                .withChatLineId(idFixed + i + 1)
-                .chat()
-        }
-
-        TextComponent("&6&m${ChatLib.getChatBreak()}").withChatLineId(idFixed + lines + 1).chat()
-
-        idFixedOffset = idFixed + lines + 1
-    }
-
-    private fun clearOldDump() {
-        if (idFixedOffset == -1) return
-        while (idFixedOffset >= idFixed)
-            ChatLib.deleteChat(idFixedOffset--)
-        idFixedOffset = -1
-    }
-
-    enum class DumpType(val messageList: () -> List<TextComponent>) {
-        CHAT(ClientListener::chatHistory),
-        ACTION_BAR(ClientListener::actionBarHistory);
-
-        companion object {
-            fun fromString(str: String) = DumpType.entries.first { it.name.equals(str, ignoreCase = true) }
+            mc.player?.sendMessage(Text.of("&cCould not open file location"), false)
         }
     }
 

@@ -1,11 +1,15 @@
-package com.chattriggers.ctjs.api.client
+package com.chattriggers.ctjs.api
 
 import com.chattriggers.ctjs.CTJS
 import net.minecraft.util.Util
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.net.UnknownHostException
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Base64
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -164,7 +168,7 @@ object FileLib {
     @JvmStatic
     @JvmOverloads
     fun getUrlContent(theUrl: String, userAgent: String? = "Mozilla/5.0"): String {
-        val conn = CTJS.makeWebRequest(theUrl, userAgent)
+        val conn = CTJS.Companion.makeWebRequest(theUrl, userAgent)
 
         return conn.getInputStream().use {
             it.readBytes()
@@ -221,7 +225,7 @@ object FileLib {
      * destDirectory (will be created if does not exist).
      * @param zipFilePath the zip file path
      * @param destDirectory the destination directory
-     * @throws IOException IOException
+     * @throws java.io.IOException IOException
      */
     @Throws(IOException::class)
     @JvmStatic
@@ -267,7 +271,7 @@ object FileLib {
     }
 
     private fun absoluteLocation(importName: String, fileLocation: String): String {
-        return CTJS.MODULES_FOLDER + File.separator + importName + File.separator + fileLocation
+        return CTJS.Companion.MODULES_FOLDER + File.separator + importName + File.separator + fileLocation
     }
 
     /**

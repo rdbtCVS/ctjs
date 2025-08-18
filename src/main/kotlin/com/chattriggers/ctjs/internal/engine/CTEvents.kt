@@ -1,20 +1,5 @@
 package com.chattriggers.ctjs.internal.engine
 
-import com.chattriggers.ctjs.internal.engine.CTEvents.BreakBlockCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.GuiMouseDragCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.MouseButtonCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.MouseDraggedCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.MouseScrollCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.NetworkCommandDispatcherRegisterCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.PacketReceivedCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.RenderBlockEntityCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.RenderEntityCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.RenderOverlayCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.RenderWorldCallback
-import com.chattriggers.ctjs.internal.engine.CTEvents.VoidCallback
-import com.chattriggers.ctjs.MCBlockEntity
-import com.chattriggers.ctjs.MCBlockPos
-import com.chattriggers.ctjs.MCEntity
 import com.mojang.brigadier.CommandDispatcher
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.event.Event
@@ -23,6 +8,7 @@ import net.minecraft.client.gui.Drawable
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.network.packet.Packet
+import org.joml.Matrix3x2fStack
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 internal object CTEvents {
@@ -38,16 +24,8 @@ internal object CTEvents {
         fun render(matrixStack: MatrixStack, partialTicks: Float)
     }
 
-    fun interface RenderEntityCallback {
-        fun render(matrixStack: MatrixStack, entity: MCEntity, partialTicks: Float, ci: CallbackInfo)
-    }
-
-    fun interface RenderBlockEntityCallback {
-        fun render(matrixStack: MatrixStack, entity: MCBlockEntity, partialTicks: Float, ci: CallbackInfo)
-    }
-
     fun interface RenderOverlayCallback {
-        fun render(matrixStack: MatrixStack, partialTicks: Float)
+        fun render(matrixStack: Matrix3x2fStack, partialTicks: Float)
     }
 
     fun interface PacketReceivedCallback {
@@ -68,10 +46,6 @@ internal object CTEvents {
 
     fun interface GuiMouseDragCallback {
         fun process(dx: Double, dy: Double, mouseX: Double, mouseY: Double, button: Int, gui: Screen, ci: CallbackInfo)
-    }
-
-    fun interface BreakBlockCallback {
-        fun breakBlock(pos: MCBlockPos)
     }
 
     fun interface NetworkCommandDispatcherRegisterCallback {
@@ -101,20 +75,6 @@ internal object CTEvents {
     val POST_RENDER_WORLD = make<RenderWorldCallback> { listeners ->
         RenderWorldCallback { stack, partialTicks ->
             listeners.forEach { it.render(stack, partialTicks) }
-        }
-    }
-
-    @JvmField
-    val RENDER_ENTITY = make<RenderEntityCallback> { listeners ->
-        RenderEntityCallback { stack, entity, partialTicks, ci ->
-            listeners.forEach { it.render(stack, entity, partialTicks, ci) }
-        }
-    }
-
-    @JvmField
-    val RENDER_BLOCK_ENTITY = make<RenderBlockEntityCallback> { listeners ->
-        RenderBlockEntityCallback { stack, blockEntity, partialTicks, ci ->
-            listeners.forEach { it.render(stack, blockEntity, partialTicks, ci) }
         }
     }
 
@@ -153,13 +113,6 @@ internal object CTEvents {
     val GUI_MOUSE_DRAG = make<GuiMouseDragCallback> { listeners ->
         GuiMouseDragCallback { dx, dy, mouseX, mouseY, button, screen, ci ->
             listeners.forEach { it.process(dx, dy, mouseX, mouseY, button, screen, ci) }
-        }
-    }
-
-    @JvmField
-    val BREAK_BLOCK = make<BreakBlockCallback> { listeners ->
-        BreakBlockCallback { pos ->
-            listeners.forEach { it.breakBlock(pos) }
         }
     }
 

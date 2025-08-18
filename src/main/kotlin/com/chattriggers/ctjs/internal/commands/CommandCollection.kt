@@ -55,12 +55,6 @@ abstract class CommandCollection : Initializer {
         allCommands.clear()
     }
 
-    fun <S, T : ArgumentBuilder<S, T>> ArgumentBuilder<S, T>.onExecute(block: (CommandContext<S>) -> Unit): T =
-        executes {
-            block(it)
-            1
-        }
-
     private fun CommandDispatcher<*>?.hasConflict(command: Command) =
         !command.overrideExisting && (this?.root?.getChild(command.name) != null)
 

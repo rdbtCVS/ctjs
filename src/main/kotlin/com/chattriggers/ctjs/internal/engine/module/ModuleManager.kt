@@ -1,12 +1,12 @@
 package com.chattriggers.ctjs.internal.engine.module
 
 import com.chattriggers.ctjs.CTJS
-import com.chattriggers.ctjs.api.message.ChatLib
-import com.chattriggers.ctjs.api.world.World
 import com.chattriggers.ctjs.engine.LogType
 import com.chattriggers.ctjs.engine.printToConsole
 import com.chattriggers.ctjs.internal.engine.JSContextFactory
 import com.chattriggers.ctjs.internal.engine.JSLoader
+import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
 import org.apache.commons.io.FileUtils
 import org.mozilla.javascript.Context
 import java.io.File
@@ -112,7 +112,10 @@ object ModuleManager {
 
         newModules.forEach {
             if (it.metadata.mixinEntry != null)
-                ChatLib.chat("&cModule ${it.name} has dynamic mixins which require a restart to take effect")
+                MinecraftClient.getInstance().player?.sendMessage(
+                    Text.of("&cModule ${it.name} has dynamic mixins which require a restart to take effect"),
+                    false
+                )
         }
 
         entryPass(newModules)
@@ -149,7 +152,7 @@ object ModuleManager {
     }
 
     fun tryReportOldVersion(module: Module) {
-        if (World.isLoaded()) {
+        if (MinecraftClient.getInstance().world != null) {
             reportOldVersion(module)
         } else {
             pendingOldModules.add(module)
@@ -157,9 +160,10 @@ object ModuleManager {
     }
 
     private fun reportOldVersion(module: Module) {
-        ChatLib.chat(
+        MinecraftClient.getInstance().player?.sendMessage(Text.of(
             "&cWarning: the module \"${module.name}\" was made for an older version of CT, " +
-                "so it may not work correctly."
+                "so it may not work correctly."),
+            false
         )
     }
 

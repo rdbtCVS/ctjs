@@ -2,16 +2,13 @@ package com.chattriggers.ctjs.internal.engine.module
 
 import com.chattriggers.ctjs.CTJS
 import com.chattriggers.ctjs.api.Config
-import com.chattriggers.ctjs.api.message.ChatLib
 import com.chattriggers.ctjs.engine.LogType
 import com.chattriggers.ctjs.engine.printToConsole
 import com.chattriggers.ctjs.engine.printTraceToConsole
-import com.chattriggers.ctjs.internal.engine.CTEvents
 import com.chattriggers.ctjs.internal.engine.module.ModuleManager.cachedModules
 import com.chattriggers.ctjs.internal.engine.module.ModuleManager.modulesFolder
 import com.chattriggers.ctjs.internal.utils.Initializer
 import com.chattriggers.ctjs.internal.utils.toVersion
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.nio.file.FileSystems
@@ -20,31 +17,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 object ModuleUpdater : Initializer {
-    private val changelogs = mutableListOf<ModuleMetadata>()
-    private var shouldReportChangelog = false
-
     override fun init() {
-        ClientPlayConnectionEvents.JOIN.register { _, _, _ -> shouldReportChangelog = true }
-
-        CTEvents.RENDER_OVERLAY.register { _, _ ->
-            if (shouldReportChangelog) {
-                changelogs.forEach(::reportChangelog)
-                changelogs.clear()
-            }
-        }
-    }
-
-    private fun tryReportChangelog(module: ModuleMetadata) {
-        if (shouldReportChangelog) {
-            reportChangelog(module)
-        } else {
-            changelogs.add(module)
-        }
-    }
-
-    private fun reportChangelog(module: ModuleMetadata) {
-        ChatLib.chat("&a[ChatTriggers] ${module.name} has updated to version ${module.version}")
-        ChatLib.chat("&aChangelog: &r${module.changelog}")
     }
 
     fun updateModule(module: Module) {
@@ -76,10 +49,6 @@ object ModuleUpdater : Initializer {
 
             module.metadata = File(module.folder, "metadata.json").let {
                 CTJS.json.decodeFromString<ModuleMetadata>(it.readText())
-            }
-
-            if (Config.moduleChangelog && module.metadata.changelog != null) {
-                tryReportChangelog(module.metadata)
             }
         } catch (e: Exception) {
             "Can't find page for ${metadata.name}".printToConsole(LogType.WARN)
