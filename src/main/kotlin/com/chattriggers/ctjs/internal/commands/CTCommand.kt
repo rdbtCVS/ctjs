@@ -8,6 +8,7 @@ import com.chattriggers.ctjs.engine.printTraceToConsole
 import com.chattriggers.ctjs.internal.engine.module.ModuleManager
 import com.chattriggers.ctjs.internal.listeners.ClientListener
 import com.chattriggers.ctjs.internal.utils.Initializer
+import com.chattriggers.ctjs.internal.utils.onExecute
 import com.chattriggers.ctjs.internal.utils.toVersion
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.StringReader
@@ -75,7 +76,6 @@ internal object CTCommand : Initializer {
                             .onExecute { mc.networkHandler?.sendChatMessage(StringArgumentType.getString(it, "message")) }
                     )
             )
-            .onExecute { mc.player?.sendMessage(Text.of(getUsage()), false) }
 
         dispatcher.register(command)
     }
@@ -108,79 +108,12 @@ internal object CTCommand : Initializer {
         }
     }
 
-    private fun getUsage() = """
-        &b&m${"-".repeat(20)}
-        &c/ct load &7- &oReloads all of the ChatTriggers modules.
-        &c/ct import <module> &7- &oImports a module.
-        &c/ct delete <module> &7- &oDeletes a module.
-        &c/ct files &7- &oOpens the ChatTriggers folder.
-        &c/ct modules &7- &oOpens the modules GUI.
-        &c/ct console [language] &7- &oOpens the ChatTriggers console.
-        &c/ct simulate <message> &7- &oSimulates a received chat message.
-        &c/ct dump &7- &oDumps previous chat messages into chat.
-        &c/ct settings &7- &oOpens the ChatTriggers settings.
-        &c/ct migrate <input> [output]&7 - &oMigrate a module from version 2.X to 3.X 
-        &c/ct &7- &oDisplays this help dialog.
-        &b&m${"-".repeat(20)}
-    """.trimIndent()
-
     private fun openFileLocation() {
         try {
             FileLib.open(ModuleManager.modulesFolder)
         } catch (exception: IOException) {
             exception.printTraceToConsole()
             mc.player?.sendMessage(Text.of("&cCould not open file location"), false)
-        }
-    }
-
-    private class FileArgumentType(private val relativeTo: File) : ArgumentType<File> {
-        override fun parse(reader: StringReader): File {
-            val isquoted = StringReader.isQuotedStringStart(reader.peek())
-            val path = if (isquoted) {
-                reader.readQuotedString()
-            } else reader.readStringUntilOrEof(' ')
-            return File(relativeTo, path)
-        }
-
-        override fun getExamples(): MutableCollection<String> {
-            return mutableListOf(
-                "/foo/bar/baz",
-                "C:\\foo\\bar\\baz",
-                "\"/path/with/spaces in the name\"",
-            )
-        }
-
-        // Copy and pasted from StringReader, but doesn't throw on EOF
-        fun StringReader.readStringUntilOrEof(terminator: Char): String {
-            val result = StringBuilder()
-            var escaped = false
-            while (canRead()) {
-                val c = read()
-                when {
-                    escaped -> {
-                        escaped = if (c == terminator || c == '\\') {
-                            result.append(c)
-                            false
-                        } else {
-                            cursor -= 1
-                            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerInvalidEscape()
-                                .createWithContext(this, c.toString())
-                        }
-                    }
-                    c == '\\' -> escaped = true
-                    c == terminator -> {
-                        cursor -= 1
-                        return result.toString()
-                    }
-                    else -> result.append(c)
-                }
-            }
-
-            return result.toString()
-        }
-
-        companion object {
-            fun getFile(ctx: CommandContext<*>, name: String) = ctx.getArgument(name, File::class.java)
         }
     }
 

@@ -2,6 +2,12 @@ package com.chattriggers.ctjs.internal.utils
 
 import com.chattriggers.ctjs.internal.launch.Descriptor
 import com.fasterxml.jackson.core.Version
+import com.mojang.brigadier.arguments.ArgumentType
+import com.mojang.brigadier.builder.ArgumentBuilder
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import com.mojang.brigadier.context.CommandContext
+import net.minecraft.command.CommandSource
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 import org.mozilla.javascript.NativeObject
@@ -54,3 +60,9 @@ fun Float.toDegrees() = this * MathHelper.DEGREES_PER_RADIAN
 
 fun KClass<*>.descriptorString(): String = java.descriptorString()
 fun KClass<*>.descriptor() = Descriptor.Object(descriptorString())
+
+fun <S, T : ArgumentBuilder<S, T>> ArgumentBuilder<S, T>.onExecute(block: (CommandContext<S>) -> Unit): T =
+    executes {
+        block(it)
+        1
+    }
