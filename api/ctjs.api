@@ -3,7 +3,6 @@ public final class com/chattriggers/ctjs/CTJS : net/fabricmc/api/ClientModInitia
 	public static final field MODULES_FOLDER Ljava/lang/String;
 	public static final field MOD_ID Ljava/lang/String;
 	public static final field MOD_VERSION Ljava/lang/String;
-	public static final field WEBSITE_ROOT Ljava/lang/String;
 	public fun <init> ()V
 	public static final fun isLoaded ()Z
 	public static final fun load ()V
@@ -22,7 +21,6 @@ public final class com/chattriggers/ctjs/CTJS$Companion {
 
 public final class com/chattriggers/ctjs/api/Config : gg/essential/vigilance/Vigilant {
 	public static final field INSTANCE Lcom/chattriggers/ctjs/api/Config;
-	public static final fun getAutoUpdateModules ()Z
 	public static final fun getClearConsoleOnLoad ()Z
 	public static final fun getConsoleBackgroundColor ()Ljava/awt/Color;
 	public static final fun getConsoleErrorColor ()Ljava/awt/Color;
@@ -32,11 +30,7 @@ public final class com/chattriggers/ctjs/api/Config : gg/essential/vigilance/Vig
 	public static final fun getConsoleTheme ()I
 	public static final fun getConsoleWarningColor ()Ljava/awt/Color;
 	public static final fun getCustomTheme ()Z
-	public static final fun getModuleChangelog ()Z
-	public static final fun getModuleImportHelp ()Z
 	public static final fun getOpenConsoleOnError ()Z
-	public static final fun getShowUpdatesInChat ()Z
-	public static final fun setAutoUpdateModules (Z)V
 	public static final fun setClearConsoleOnLoad (Z)V
 	public static final fun setConsoleBackgroundColor (Ljava/awt/Color;)V
 	public static final fun setConsoleErrorColor (Ljava/awt/Color;)V
@@ -46,10 +40,7 @@ public final class com/chattriggers/ctjs/api/Config : gg/essential/vigilance/Vig
 	public static final fun setConsoleTheme (I)V
 	public static final fun setConsoleWarningColor (Ljava/awt/Color;)V
 	public static final fun setCustomTheme (Z)V
-	public static final fun setModuleChangelog (Z)V
-	public static final fun setModuleImportHelp (Z)V
 	public static final fun setOpenConsoleOnError (Z)V
-	public static final fun setShowUpdatesInChat (Z)V
 }
 
 public final class com/chattriggers/ctjs/api/Config$ConsoleSettings {

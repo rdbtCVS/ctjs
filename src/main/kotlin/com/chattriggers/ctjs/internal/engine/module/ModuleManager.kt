@@ -16,7 +16,6 @@ import java.util.*
 object ModuleManager {
     val cachedModules = mutableListOf<Module>()
     val modulesFolder = File(CTJS.MODULES_FOLDER)
-    private val pendingOldModules = mutableListOf<Module>()
 
     fun setup() {
         modulesFolder.mkdirs()
@@ -26,17 +25,8 @@ object ModuleManager {
             it.name.lowercase()
         }
 
-        // Check if those modules have updates
-        installedModules.forEach(ModuleUpdater::updateModule)
         cachedModules.addAll(installedModules)
-
-        // Import required modules
-        installedModules.distinct().forEach { module ->
-            module.metadata.requires?.forEach { ModuleUpdater.importModule(it, module.name) }
-        }
-
         sortModules()
-
         loadAssetsAndJars(cachedModules)
     }
 
@@ -103,28 +93,8 @@ object ModuleManager {
         return Module(directory.name, metadata, directory)
     }
 
-    data class ImportedModule(val module: Module?, val dependencies: List<Module>)
-
-    fun importModule(moduleName: String): ImportedModule {
-        val newModules = ModuleUpdater.importModule(moduleName)
-
-        loadAssetsAndJars(newModules)
-
-        newModules.forEach {
-            if (it.metadata.mixinEntry != null)
-                MinecraftClient.getInstance().player?.sendMessage(
-                    Text.of("&cModule ${it.name} has dynamic mixins which require a restart to take effect"),
-                    false
-                )
-        }
-
-        entryPass(newModules)
-
-        return ImportedModule(newModules.getOrNull(0), newModules.drop(1))
-    }
-
     fun deleteModule(name: String): Boolean {
-        val module = cachedModules.find { it.name.lowercase() == name.lowercase() } ?: return false
+        val module = cachedModules.find { it.name.equals(name, ignoreCase = true) } ?: return false
 
         val file = File(modulesFolder, module.name)
         check(file.exists()) { "Expected module to have an existing folder!" }
@@ -144,27 +114,6 @@ object ModuleManager {
         }
 
         return false
-    }
-
-    fun reportOldVersions() {
-        pendingOldModules.forEach(::reportOldVersion)
-        pendingOldModules.clear()
-    }
-
-    fun tryReportOldVersion(module: Module) {
-        if (MinecraftClient.getInstance().world != null) {
-            reportOldVersion(module)
-        } else {
-            pendingOldModules.add(module)
-        }
-    }
-
-    private fun reportOldVersion(module: Module) {
-        MinecraftClient.getInstance().player?.sendMessage(Text.of(
-            "&cWarning: the module \"${module.name}\" was made for an older version of CT, " +
-                "so it may not work correctly."),
-            false
-        )
     }
 
     private fun loadAssets(modules: List<Module>) {

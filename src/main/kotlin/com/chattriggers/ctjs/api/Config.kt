@@ -14,42 +14,6 @@ object Config : Vigilant(File(CTJS.configLocation, "ChatTriggers.toml"), sorting
     @JvmStatic
     @Property(
         PropertyType.SWITCH,
-        name = "Show module help on import",
-        category = "General",
-        description = "If a module is imported and it has a help message, display it in chat"
-    )
-    var moduleImportHelp = true
-
-    @JvmStatic
-    @Property(
-        PropertyType.SWITCH,
-        name = "Show module changelog on update",
-        category = "General",
-        description = "If a module is updated and it has a changelog, display it in chat"
-    )
-    var moduleChangelog = true
-
-    @JvmStatic
-    @Property(
-        PropertyType.SWITCH,
-        name = "Show updates in chat",
-        category = "General",
-        description = "Show CT module import/update messages in the chat",
-    )
-    var showUpdatesInChat = true
-
-    @JvmStatic
-    @Property(
-        PropertyType.SWITCH,
-        name = "Auto-update modules",
-        category = "General",
-        description = "Check for and download module updates every time CT loads",
-    )
-    var autoUpdateModules = true
-
-    @JvmStatic
-    @Property(
-        PropertyType.SWITCH,
         name = "Clear console on CT load",
         category = "Console",
     )

@@ -36,8 +36,6 @@ import kotlin.concurrent.thread
 
 internal object CTCommand : Initializer {
     private val mc = MinecraftClient.getInstance()
-    private const val idFixed = 90123 // ID for dumped chat
-    private var idFixedOffset = -1 // ID offset (increments)
 
     override fun init() {
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
@@ -50,11 +48,6 @@ internal object CTCommand : Initializer {
             .then(literal("load").onExecute { CTJS.load() })
             .then(literal("unload").onExecute { CTJS.unload() })
             .then(literal("files").onExecute { openFileLocation() })
-            .then(
-                literal("import")
-                    .then(argument("module", StringArgumentType.string())
-                        .onExecute { import(StringArgumentType.getString(it, "module")) })
-            )
             .then(
                 literal("delete")
                     .then(argument("module", ModuleArgumentType)
@@ -78,34 +71,6 @@ internal object CTCommand : Initializer {
             )
 
         dispatcher.register(command)
-    }
-
-    private fun import(moduleName: String) {
-        if (ModuleManager.cachedModules.any { it.name.equals(moduleName, ignoreCase = true) }) {
-            mc.player?.sendMessage(Text.of("&cModule $moduleName is already installed!"), false)
-        } else {
-            mc.player?.sendMessage(Text.of("&cImporting $moduleName..."), false)
-            thread {
-                val (module, dependencies) = ModuleManager.importModule(moduleName)
-                if (module == null) {
-                    mc.player?.sendMessage(Text.of("&cUnable to import module $moduleName"), false)
-                    return@thread
-                }
-
-                val allModules = listOf(module) + dependencies
-                val modVersion = CTJS.MOD_VERSION.toVersion()
-                allModules.forEach {
-                    val version = it.targetModVersion ?: return@forEach
-                    if (version.majorVersion < modVersion.majorVersion)
-                        ModuleManager.tryReportOldVersion(it)
-                }
-
-                mc.player?.sendMessage(Text.of("&aSuccessfully imported ${module.metadata.name ?: module.name}"), false)
-                if (Config.moduleImportHelp && module.metadata.helpMessage != null) {
-                    mc.player?.sendMessage(Text.of(module.metadata.helpMessage.toString().take(383)), false)
-                }
-            }
-        }
     }
 
     private fun openFileLocation() {
