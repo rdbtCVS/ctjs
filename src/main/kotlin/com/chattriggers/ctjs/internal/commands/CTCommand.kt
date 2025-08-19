@@ -6,17 +6,15 @@ import com.chattriggers.ctjs.api.FileLib
 import com.chattriggers.ctjs.engine.Console
 import com.chattriggers.ctjs.engine.printTraceToConsole
 import com.chattriggers.ctjs.internal.engine.module.ModuleManager
+import com.chattriggers.ctjs.internal.engine.module.ModuleListScreen
 import com.chattriggers.ctjs.internal.listeners.ClientListener
 import com.chattriggers.ctjs.internal.utils.Initializer
 import com.chattriggers.ctjs.internal.utils.onExecute
-import com.chattriggers.ctjs.internal.utils.toVersion
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
@@ -26,13 +24,9 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.client.MinecraftClient
 import net.minecraft.command.CommandSource
-import net.minecraft.text.ClickEvent
-import net.minecraft.text.HoverEvent
 import net.minecraft.text.Text
-import java.io.File
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
-import kotlin.concurrent.thread
 
 internal object CTCommand : Initializer {
     private val mc = MinecraftClient.getInstance()
@@ -47,7 +41,7 @@ internal object CTCommand : Initializer {
         val command = literal("ct")
             .then(literal("load").onExecute { CTJS.load() })
             .then(literal("unload").onExecute { CTJS.unload() })
-            .then(literal("files").onExecute { openFileLocation() })
+            .then(literal("files").onExecute { FileLib.openModulesFolder() })
             .then(
                 literal("delete")
                     .then(argument("module", ModuleArgumentType)
@@ -69,17 +63,11 @@ internal object CTCommand : Initializer {
                             .onExecute { mc.networkHandler?.sendChatMessage(StringArgumentType.getString(it, "message")) }
                     )
             )
+            .then(literal("modules").onExecute { ClientListener.addTask(0) {
+                mc.setScreen(ModuleListScreen())
+            } })
 
         dispatcher.register(command)
-    }
-
-    private fun openFileLocation() {
-        try {
-            FileLib.open(ModuleManager.modulesFolder)
-        } catch (exception: IOException) {
-            exception.printTraceToConsole()
-            mc.player?.sendMessage(Text.of("&cCould not open file location"), false)
-        }
     }
 
     private object ModuleArgumentType : ArgumentType<String> {

@@ -1,6 +1,10 @@
 package com.chattriggers.ctjs.api
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.engine.printTraceToConsole
+import com.chattriggers.ctjs.internal.engine.module.ModuleManager
+import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
 import net.minecraft.util.Util
 import java.io.BufferedOutputStream
 import java.io.File
@@ -314,5 +318,18 @@ object FileLib {
     @JvmStatic
     fun open(path: File) {
         Util.getOperatingSystem().open(path)
+    }
+
+    /**
+     * Opens the path to the modules folder in the file explorer
+     */
+    @JvmStatic
+    fun openModulesFolder() {
+        try {
+            open(ModuleManager.modulesFolder)
+        } catch (exception: IOException) {
+            exception.printTraceToConsole()
+            MinecraftClient.getInstance().player?.sendMessage(Text.of("&cCould not open file location"), false)
+        }
     }
 }
