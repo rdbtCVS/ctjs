@@ -94,7 +94,7 @@ class ModuleEntry(val textRenderer: TextRenderer, val module: Module) : AlwaysSe
         module.metadata.creator?.let {
             context.drawTextWithShadow(
                 textRenderer,
-                "by $it",
+                Text.translatable("ctjs.ui.byCreator", it),
                 x + 2,
                 y + entryHeight - textRenderer.fontHeight - 2,
                 ColorHelper.fromFloats(1f, 0.8f, 0.8f, 0.8f)

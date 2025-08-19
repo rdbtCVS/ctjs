@@ -5,5 +5,6 @@
     "ctjs.ui.openModulesFolder": "Open Modules Folder",
     "ctjs.ui.delete": "Delete",
     "ctjs.ui.deleteConfirmation": "Are you sure you want to delete %s?",
-    "ctjs.ui.noRevert": "This action cannot be reverted!"
+    "ctjs.ui.noRevert": "This action cannot be reverted!",
+    "ctjs.ui.byCreator": "by %s"
 }
