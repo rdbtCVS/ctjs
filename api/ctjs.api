@@ -106,6 +106,7 @@ public final class com/chattriggers/ctjs/api/FileLib {
 	public static final fun isDirectory (Ljava/lang/String;Ljava/lang/String;)Z
 	public static final fun open (Ljava/io/File;)V
 	public static final fun open (Ljava/lang/String;)V
+	public static final fun openModulesFolder ()V
 	public static final fun read (Ljava/io/File;)Ljava/lang/String;
 	public static final fun read (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun read (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
