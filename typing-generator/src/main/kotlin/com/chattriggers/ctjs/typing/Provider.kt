@@ -37,7 +37,7 @@ class Processor(environment: SymbolProcessorEnvironment) : SymbolProcessor {
     }
 
     private fun collectRoots(resolver: Resolver): Set<KSClassDeclaration> {
-        val manualRootDeclarations = manualRoots
+        val manualRootDeclarations = ManualRoots.roots
             .map(resolver::getKSNameFromString)
             .mapNotNull(resolver::getClassDeclarationByName)
             .toSet()

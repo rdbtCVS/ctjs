@@ -11,7 +11,11 @@ sealed interface ITriggerType {
 }
 
 enum class TriggerType : ITriggerType {
-    RENDER_OVERLAY
+    RENDER_OVERLAY,
+
+    CHAT,
+    ACTION_BAR,
+    MESSAGE_SENT,
 }
 
 data class CustomTriggerType(override val name: String) : ITriggerType

@@ -4,10 +4,8 @@ import com.chattriggers.ctjs.api.triggers.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object Register {
-    private val methodMap = Register::class.java.methods.filter {
-        it.name.startsWith("register") && it.name.length > "register".length
-    }.associateBy {
-        it.name.lowercase().drop("register".length)
+    private val methodMap = TriggerType.entries.associateBy {
+        it.name.lowercase().replace("_", "")
     }
     private val customTriggers = mutableSetOf<CustomTriggerType>()
 
@@ -24,7 +22,7 @@ object Register {
     fun register(triggerType: String, method: Any): Trigger {
         val type = triggerType.lowercase()
 
-        methodMap[type]?.let { return it.invoke(this, method) as Trigger }
+        methodMap[type]?.let { return RegularTrigger(method, it) }
 
         val customType = CustomTriggerType(type)
         if (customType in customTriggers)
@@ -42,10 +40,5 @@ object Register {
         return object {
             fun trigger(vararg args: Any?) = customType.triggerAll(*args)
         }
-    }
-
-    @JvmStatic
-    fun registerRenderOverlay(method: Any): Trigger {
-        return RegularTrigger(method, TriggerType.RENDER_OVERLAY)
     }
 }

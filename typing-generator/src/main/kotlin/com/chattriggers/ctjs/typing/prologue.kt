@@ -1,31 +1,5 @@
 package com.chattriggers.ctjs.typing
 
-val manualRoots = setOf(
-    "java.awt.Color",
-    "java.util.ArrayList",
-    "java.util.HashMap",
-    "gg.essential.universal.UKeyboard",
-    "net.minecraft.util.Hand",
-    "org.lwjgl.opengl.GL11",
-    "org.lwjgl.opengl.GL12",
-    "org.lwjgl.opengl.GL13",
-    "org.lwjgl.opengl.GL14",
-    "org.lwjgl.opengl.GL15",
-    "org.lwjgl.opengl.GL20",
-    "org.lwjgl.opengl.GL21",
-    "org.lwjgl.opengl.GL30",
-    "org.lwjgl.opengl.GL31",
-    "org.lwjgl.opengl.GL32",
-    "org.lwjgl.opengl.GL33",
-    "org.lwjgl.opengl.GL40",
-    "org.lwjgl.opengl.GL41",
-    "org.lwjgl.opengl.GL42",
-    "org.lwjgl.opengl.GL43",
-    "org.lwjgl.opengl.GL44",
-    "org.lwjgl.opengl.GL45",
-    "org.spongepowered.asm.mixin.injection.callback.CallbackInfo",
-)
-
 private val providedTypes = mutableMapOf(
     "Keyboard" to "gg.essential.universal.UKeyboard",
     "Hand" to "net.minecraft.util.Hand",
@@ -68,7 +42,10 @@ val prologue = """
     }
     
     interface RegisterTypes {
-        renderOverlay(ctx: net.minecraft.client.gui.DrawContext, tickCounter: net.minecraft.client.render.RenderTickCounter): com.chattriggers.ctjs.api.triggers.Trigger;
+        renderOverlay(ctx: net.minecraft.client.gui.DrawContext, tickCounter: net.minecraft.client.render.RenderTickCounter);
+        chat(message: net.minecraft.text.Text, event: CancellableEvent);
+        actionBar(message: net.minecraft.text.Text, event: CancellableEvent);
+        messageSent(message: string, isCommand: boolean, event: CancellableEvent);
     }
 
     declare global {
@@ -103,9 +80,11 @@ val prologue = """
       const HashMap: typeof java.util.HashMap;
       interface HashMap<K, V> extends java.util.HashMap<K, V> {}
       
-${providedTypes.entries.joinToString("") { (name, type) ->
-"const $name: typeof $type;\ninterface $name extends $type {}\n"
-}.prependIndent("      ")}
+${
+    providedTypes.entries.joinToString("") { (name, type) ->
+        "const $name: typeof $type;\ninterface $name extends $type {}\n"
+    }.prependIndent("      ")
+}
 
       /**
        * Registers a new trigger and returns it.
@@ -113,7 +92,7 @@ ${providedTypes.entries.joinToString("") { (name, type) ->
       function register<T extends keyof RegisterTypes>(
         name: T, 
         cb: (...args: Parameters<RegisterTypes[T]>) => void,
-      ): ReturnType<RegisterTypes[T]>;
+      ): com.chattriggers.ctjs.api.triggers.Trigger;
 
       /**
        * Cancels the given event

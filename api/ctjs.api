@@ -197,6 +197,9 @@ public final class com/chattriggers/ctjs/api/triggers/Trigger$Priority : java/la
 }
 
 public final class com/chattriggers/ctjs/api/triggers/TriggerType : java/lang/Enum, com/chattriggers/ctjs/api/triggers/ITriggerType {
+	public static final field ACTION_BAR Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+	public static final field CHAT Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+	public static final field MESSAGE_SENT Lcom/chattriggers/ctjs/api/triggers/TriggerType;
 	public static final field RENDER_OVERLAY Lcom/chattriggers/ctjs/api/triggers/TriggerType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public synthetic fun getName ()Ljava/lang/String;
@@ -252,7 +255,6 @@ public final class com/chattriggers/ctjs/engine/Register {
 	public static final field INSTANCE Lcom/chattriggers/ctjs/engine/Register;
 	public static final fun createCustomTrigger (Ljava/lang/String;)Ljava/lang/Object;
 	public static final fun register (Ljava/lang/String;Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/triggers/Trigger;
-	public static final fun registerRenderOverlay (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/triggers/Trigger;
 }
 
 public final class com/chattriggers/ctjs/engine/WrappedThread {
