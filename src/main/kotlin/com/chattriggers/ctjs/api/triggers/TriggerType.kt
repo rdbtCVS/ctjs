@@ -16,6 +16,8 @@ enum class TriggerType : ITriggerType {
     CHAT,
     ACTION_BAR,
     MESSAGE_SENT,
+
+    TICK,
 }
 
 data class CustomTriggerType(override val name: String) : ITriggerType

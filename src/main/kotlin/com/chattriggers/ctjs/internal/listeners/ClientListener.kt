@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Identifier
 
 object ClientListener : Initializer {
@@ -24,6 +25,10 @@ object ClientListener : Initializer {
                         true
                     } else false
                 }
+            }
+
+            if (MinecraftClient.getInstance()?.world?.tickManager?.shouldTick() == true) {
+                TriggerType.TICK.triggerAll()
             }
         }
 

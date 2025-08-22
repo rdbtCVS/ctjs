@@ -201,6 +201,7 @@ public final class com/chattriggers/ctjs/api/triggers/TriggerType : java/lang/En
 	public static final field CHAT Lcom/chattriggers/ctjs/api/triggers/TriggerType;
 	public static final field MESSAGE_SENT Lcom/chattriggers/ctjs/api/triggers/TriggerType;
 	public static final field RENDER_OVERLAY Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+	public static final field TICK Lcom/chattriggers/ctjs/api/triggers/TriggerType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public synthetic fun getName ()Ljava/lang/String;
 	public fun triggerAll ([Ljava/lang/Object;)V

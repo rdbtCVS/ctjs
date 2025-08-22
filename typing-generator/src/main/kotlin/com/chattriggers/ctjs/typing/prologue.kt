@@ -46,6 +46,7 @@ val prologue = """
         chat(message: net.minecraft.text.Text, event: CancellableEvent);
         actionBar(message: net.minecraft.text.Text, event: CancellableEvent);
         messageSent(message: string, isCommand: boolean, event: CancellableEvent);
+        tick();
     }
 
     declare global {
