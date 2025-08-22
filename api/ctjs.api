@@ -196,6 +196,15 @@ public final class com/chattriggers/ctjs/api/triggers/Trigger$Priority : java/la
 	public static fun values ()[Lcom/chattriggers/ctjs/api/triggers/Trigger$Priority;
 }
 
+public final class com/chattriggers/ctjs/api/triggers/TriggerType : java/lang/Enum, com/chattriggers/ctjs/api/triggers/ITriggerType {
+	public static final field RENDER_OVERLAY Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public synthetic fun getName ()Ljava/lang/String;
+	public fun triggerAll ([Ljava/lang/Object;)V
+	public static fun valueOf (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+	public static fun values ()[Lcom/chattriggers/ctjs/api/triggers/TriggerType;
+}
+
 public final class com/chattriggers/ctjs/engine/Console {
 	public static final field INSTANCE Lcom/chattriggers/ctjs/engine/Console;
 	public final fun clear ()V
@@ -243,6 +252,7 @@ public final class com/chattriggers/ctjs/engine/Register {
 	public static final field INSTANCE Lcom/chattriggers/ctjs/engine/Register;
 	public static final fun createCustomTrigger (Ljava/lang/String;)Ljava/lang/Object;
 	public static final fun register (Ljava/lang/String;Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/triggers/Trigger;
+	public static final fun registerRenderOverlay (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/triggers/Trigger;
 }
 
 public final class com/chattriggers/ctjs/engine/WrappedThread {

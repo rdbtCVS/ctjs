@@ -65,7 +65,10 @@ val prologue = """
     
     declare interface Number {
       easeOut(to: number, speed: number, jump: number): number;
-      easeColor(to: number, speed: number, jump: number): java.awt.Color;
+    }
+    
+    interface RegisterTypes {
+        renderOverlay(ctx: net.minecraft.client.gui.DrawContext, tickCounter: net.minecraft.client.render.RenderTickCounter): com.chattriggers.ctjs.api.triggers.Trigger;
     }
 
     declare global {
@@ -125,7 +128,6 @@ ${providedTypes.entries.joinToString("") { (name, type) ->
       function createCustomTrigger(name: string): { trigger(...args: unknown[]) };
       
       function easeOut(start: number, finish: number, speed: number, jump?: number): number;
-      function easeColor(start: number, finish: number, speed: number, jump?: number): java.awt.Color;
 
       function print(message: string, color?: java.awt.Color): void;
       function println(message: string, color?: java.awt.Color, end?: string): void;

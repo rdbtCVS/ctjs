@@ -10,4 +10,8 @@ sealed interface ITriggerType {
     }
 }
 
+enum class TriggerType : ITriggerType {
+    RENDER_OVERLAY
+}
+
 data class CustomTriggerType(override val name: String) : ITriggerType

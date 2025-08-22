@@ -21,10 +21,6 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-if (!project.hasProperty("full")) {
-    project.gradle.startParameter.excludedTaskNames.add("kspKotlin")
-}
-
 version = property("mod_version").toString()
 
 repositories {
