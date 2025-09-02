@@ -1,17 +1,18 @@
 package com.chattriggers.ctjs.api.render
 
+import com.chattriggers.ctjs.MCVertexFormat
 import com.chattriggers.ctjs.api.client.Client
 import com.chattriggers.ctjs.api.client.Player
 import com.chattriggers.ctjs.api.entity.PlayerMP
 import com.chattriggers.ctjs.api.message.ChatLib
 import com.chattriggers.ctjs.api.vec.Vec3f
-import com.chattriggers.ctjs.internal.mixins.EntityRenderDispatcherAccessor
-import com.chattriggers.ctjs.MCVertexFormat
 import com.chattriggers.ctjs.engine.LogType
 import com.chattriggers.ctjs.engine.printToConsole
+import com.chattriggers.ctjs.internal.mixins.EntityRenderDispatcherAccessor
 import com.chattriggers.ctjs.internal.utils.asMixin
 import com.chattriggers.ctjs.internal.utils.getOrDefault
 import com.chattriggers.ctjs.internal.utils.toRadians
+import com.mojang.blaze3d.pipeline.RenderPipeline.Snippet
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.essential.elementa.dsl.component1
 import gg.essential.elementa.dsl.component2
@@ -22,10 +23,9 @@ import gg.essential.universal.UMatrixStack
 import gg.essential.universal.UMinecraft
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.network.AbstractClientPlayerEntity
 import net.minecraft.client.render.DiffuseLighting
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.client.util.math.MatrixStack
@@ -35,11 +35,7 @@ import org.mozilla.javascript.NativeObject
 import java.awt.Color
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.math.PI
-import kotlin.math.atan
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 object Renderer {
     private val NEWLINE_REGEX = """\n|\r\n?""".toRegex()
@@ -177,10 +173,10 @@ object Renderer {
     }
 
     @JvmStatic
-    fun disableCull() = apply { RenderSystem.disableCull() }
+    fun disableCull() = apply { LegacyPipelineBuilder.disableCull() }
 
     @JvmStatic
-    fun enableCull() = apply { RenderSystem.enableCull() }
+    fun enableCull() = apply { LegacyPipelineBuilder.enableCull() }
 
     @JvmStatic
     fun disableLighting() = apply { UGraphics.disableLighting() }
@@ -189,10 +185,10 @@ object Renderer {
     fun enableLighting() = apply { UGraphics.enableLighting() }
 
     @JvmStatic
-    fun disableDepth() = apply { UGraphics.disableDepth() }
+    fun disableDepth() = apply { LegacyPipelineBuilder.disableDepth() }
 
     @JvmStatic
-    fun enableDepth() = apply { UGraphics.enableDepth() }
+    fun enableDepth() = apply { LegacyPipelineBuilder.enableDepth() }
 
     @JvmStatic
     fun depthFunc(func: Int) = apply { UGraphics.depthFunc(func) }
@@ -201,10 +197,10 @@ object Renderer {
     fun depthMask(flag: Boolean) = apply { UGraphics.depthMask(flag) }
 
     @JvmStatic
-    fun disableBlend() = apply { UGraphics.disableBlend() }
+    fun disableBlend() = apply { LegacyPipelineBuilder.disableBlend() }
 
     @JvmStatic
-    fun enableBlend() = apply { UGraphics.enableBlend() }
+    fun enableBlend() = apply { LegacyPipelineBuilder.enabledBlend() }
 
     @JvmStatic
     fun blendFunc(func: Int) = apply { UGraphics.blendEquation(func) }
@@ -222,12 +218,12 @@ object Renderer {
     @JvmStatic
     @JvmOverloads
     fun bindTexture(texture: Image, textureIndex: Int = 0) = apply {
-        UGraphics.bindTexture(textureIndex, texture.getTexture()?.glId ?: 0)
+        UGraphics.bindTexture(textureIndex, texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
     fun deleteTexture(texture: Image) = apply {
-        UGraphics.deleteTexture(texture.getTexture()?.glId ?: 0)
+        UGraphics.deleteTexture(texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
@@ -314,8 +310,9 @@ object Renderer {
     fun begin(
         drawMode: DrawMode = Renderer.DrawMode.QUADS,
         vertexFormat: VertexFormat = Renderer.VertexFormat.POSITION,
+        snippet: Renderer.RenderSnippet = Renderer.RenderSnippet.POSITION_COLOR_SNIPPET
     ) = apply {
-        Renderer3d.begin(drawMode, vertexFormat)
+        Renderer3d.begin(drawMode, vertexFormat, snippet)
     }
 
     /**
@@ -580,13 +577,13 @@ object Renderer {
 
         scale(1f, 1f, 50f)
 
-        RenderSystem.setShaderTexture(0, image.getTexture()?.glId ?: 0)
+        RenderSystem.setShaderTexture(0, image.getTexture()?.glTexture)
 
-        begin(DrawMode.QUADS, VertexFormat.POSITION_TEXTURE)
-        pos(x, y + height, 0f).tex(0f, 1f)
-        pos(x + width, y + height, 0f).tex(1f, 1f)
-        pos(x + width, y, 0f).tex(1f, 0f)
-        pos(x, y, 0f).tex(0f, 0f)
+        begin(DrawMode.QUADS, VertexFormat.POSITION_TEXTURE_COLOR, snippet = RenderSnippet.POSITION_TEX_COLOR_SNIPPET)
+        pos(x, y + height, 0f).tex(0f, 1f).color(colorized!!)
+        pos(x + width, y + height, 0f).tex(1f, 1f).color(colorized!!)
+        pos(x + width, y, 0f).tex(1f, 0f).color(colorized!!)
+        pos(x, y, 0f).tex(0f, 0f).color(colorized!!)
         draw()
     }
 
@@ -657,19 +654,19 @@ object Renderer {
         val oldBodyYaw = entity.bodyYaw
         val oldYaw = entity.yaw
         val oldPitch = entity.pitch
-        val oldPrevHeadYaw = entity.prevHeadYaw
+        val oldPrevHeadYaw = entity.lastHeadYaw
         val oldHeadYaw = entity.headYaw
 
         entity.bodyYaw = 180.0f + entityYaw * 20.0f
         entity.yaw = 180.0f + entityYaw * 40.0f
         entity.pitch = -entityPitch * 20.0f
         entity.headYaw = entity.yaw
-        entity.prevHeadYaw = entity.yaw
+        entity.lastHeadYaw = entity.yaw
 
         matrixStack.push()
         matrixStack.translate(0.0, 0.0, 1000.0)
         matrixStack.push()
-        matrixStack.translate(x.toDouble(), y.toDouble(), -950.0)
+        matrixStack.translate(x.toDouble(), y.toDouble(), 50.0)
 
         // UC's version of multiplyPositionMatrix
         matrixStack.peek().model.mul(
@@ -681,7 +678,7 @@ object Renderer {
         )
 
         matrixStack.multiply(flipModelRotation)
-        DiffuseLighting.method_34742()
+        DiffuseLighting.enableGuiShaderLighting()
 
         val entityRenderDispatcher = MinecraftClient.getInstance().entityRenderDispatcher
 
@@ -707,18 +704,23 @@ object Renderer {
             showStingers
         )
 
-        val vec3d = entityRenderer.getPositionOffset(entity, partialTicks)
+        val playerEntityRenderState = entityRenderer.createRenderState().apply {
+            this.baseScale = size.toFloat()
+            this.bodyYaw = entity.bodyYaw
+            this.relativeHeadYaw = entity.yaw
+        }
+
+        val vec3d = entityRenderer.getPositionOffset(playerEntityRenderState)
         val d = vec3d.getX()
         val e = vec3d.getY()
         val f = vec3d.getZ()
         matrixStack.push()
         matrixStack.translate(d, e, f)
-        RenderSystem.runAsFancy {
-            entityRenderer.render(entity, 0.0f, 1.0f, matrixStack.toMC(), vertexConsumers, light)
-            if (entity.doesRenderOnFire()) {
-                entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
-                    .invokeRenderFire(matrixStack.toMC(), vertexConsumers, entity, Quaternionf())
-            }
+
+        entityRenderer.render(playerEntityRenderState, matrixStack.toMC(), vertexConsumers, light)
+        if (entity.doesRenderOnFire()) {
+            entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
+                .invokerRenderFire(matrixStack.toMC(), vertexConsumers, playerEntityRenderState, Quaternionf())
         }
 
         matrixStack.pop()
@@ -732,7 +734,7 @@ object Renderer {
         entity.bodyYaw = oldBodyYaw
         entity.yaw = oldYaw
         entity.pitch = oldPitch
-        entity.prevHeadYaw = oldPrevHeadYaw
+        entity.lastHeadYaw = oldPrevHeadYaw
         entity.headYaw = oldHeadYaw
 
         matrixStack.pop()
@@ -776,7 +778,7 @@ object Renderer {
     }
 
     enum class VertexFormat(private val mcValue: MCVertexFormat) {
-        LINES(VertexFormats.LINES),
+        LINES(VertexFormats.POSITION_COLOR_NORMAL),
         POSITION(VertexFormats.POSITION),
         POSITION_COLOR(VertexFormats.POSITION_COLOR),
         POSITION_TEXTURE(VertexFormats.POSITION_TEXTURE),
@@ -792,6 +794,30 @@ object Renderer {
             @JvmStatic
             fun fromMC(ucValue: MCVertexFormat) = entries.first { it.mcValue == ucValue }
         }
+    }
+
+    enum class RenderSnippet(val mcSnippet: Snippet) {
+        MATRICES_SNIPPET(RenderPipelines.MATRICES_SNIPPET),
+        FOG_NO_COLOR_SNIPPET(RenderPipelines.FOG_NO_COLOR_SNIPPET),
+        FOG_SNIPPET(RenderPipelines.FOG_SNIPPET),
+        MATRICES_COLOR_SNIPPET(RenderPipelines.MATRICES_COLOR_SNIPPET),
+        MATRICES_COLOR_FOG_SNIPPET(RenderPipelines.MATRICES_COLOR_FOG_SNIPPET),
+        MATRICES_COLOR_FOG_OFFSET_SNIPPET(RenderPipelines.MATRICES_COLOR_FOG_OFFSET_SNIPPET),
+        MATRICES_COLOR_FOG_LIGHT_DIR_SNIPPET(RenderPipelines.MATRICES_COLOR_FOG_LIGHT_DIR_SNIPPET),
+        TERRAIN_SNIPPET(RenderPipelines.TERRAIN_SNIPPET),
+        ENTITY_SNIPPET(RenderPipelines.ENTITY_SNIPPET),
+        RENDERTYPE_BEACON_BEAM_SNIPPET(RenderPipelines.RENDERTYPE_BEACON_BEAM_SNIPPET),
+        TEXT_SNIPPET(RenderPipelines.TEXT_SNIPPET),
+        RENDERTYPE_END_PORTAL_SNIPPET(RenderPipelines.RENDERTYPE_END_PORTAL_SNIPPET),
+        RENDERTYPE_CLOUDS_SNIPPET(RenderPipelines.RENDERTYPE_CLOUDS_SNIPPET),
+        RENDERTYPE_LINES_SNIPPET(RenderPipelines.RENDERTYPE_LINES_SNIPPET),
+        POSITION_COLOR_SNIPPET(RenderPipelines.POSITION_COLOR_SNIPPET),
+        PARTICLE_SNIPPET(RenderPipelines.PARTICLE_SNIPPET),
+        WEATHER_SNIPPET(RenderPipelines.WEATHER_SNIPPET),
+        GUI_SNIPPET(RenderPipelines.GUI_SNIPPET),
+        POSITION_TEX_COLOR_SNIPPET(RenderPipelines.POSITION_TEX_COLOR_SNIPPET),
+        RENDERTYPE_OUTLINE_SNIPPET(RenderPipelines.RENDERTYPE_OUTLINE_SNIPPET),
+        POST_EFFECT_PROCESSOR_SNIPPET(RenderPipelines.POST_EFFECT_PROCESSOR_SNIPPET),
     }
 
     class ScreenWrapper {
